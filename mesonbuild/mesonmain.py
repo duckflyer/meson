@@ -109,7 +109,7 @@ class CommandLineParser:
         return 0
 
     def add_help_arguments(self, parser):
-        parser.add_argument('command', nargs='?')
+        parser.add_argument('command', nargs='?', choices=self.commands)
 
     def run_help_command(self, options):
         if options.command:

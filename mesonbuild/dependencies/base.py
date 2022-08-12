@@ -606,6 +606,21 @@ class SystemDependency(ExternalDependency):
         return 'system'
 
 
+class SystemLibDependency(SystemDependency):
+
+    """Dependency base for System Library type dependencies."""
+
+    def __init__(self, name: str, env: 'Environment', kwargs: T.Dict[str, T.Any],
+                 language: T.Optional[str] = None) -> None:
+        super().__init__(name, env, kwargs, language=language)
+
+        if not self.clib_compiler:
+            raise DependencyException('no proper toolchain found.')
+
+    def log_tried(self) -> str:
+        return 'systemLib'
+
+
 class BuiltinDependency(ExternalDependency):
 
     """Dependency base for Builtin type dependencies."""

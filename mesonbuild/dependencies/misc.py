@@ -24,7 +24,7 @@ from .. import mesonlib
 from .. import mlog
 from ..environment import detect_cpu_family
 from .base import DependencyException, DependencyMethods
-from .base import BuiltinDependency, SystemDependency
+from .base import BuiltinDependency, SystemDependency, SystemLibDependency
 from .cmake import CMakeDependency
 from .configtool import ConfigToolDependency
 from .factory import DependencyFactory, factory_methods
@@ -517,7 +517,7 @@ class IntlSystemDependency(SystemDependency):
                     return
 
 
-class OpensslSystemDependency(SystemDependency):
+class OpensslSystemDependency(SystemLibDependency):
     def __init__(self, name: str, env: 'Environment', kwargs: T.Dict[str, T.Any]):
         super().__init__(name, env, kwargs)
 

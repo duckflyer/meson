@@ -28,8 +28,9 @@ from ..compilers import clib_langs
 from ..mesonlib import LibType, MachineChoice, MesonException, HoldableObject, OptionKey
 from ..mesonlib import version_compare_many
 #from ..interpreterbase import FeatureDeprecated, FeatureNew
-
+import abc
 if T.TYPE_CHECKING:
+    import abc
     from .._typing import ImmutableListProtocol
     from ..build import StructuredSources
     from ..compilers.compilers import Compiler
@@ -42,9 +43,38 @@ if T.TYPE_CHECKING:
     from ..mesonlib import FileOrString
 
 
+
+
+
 class DependencyException(MesonException):
     '''Exceptions raised while trying to find dependencies'''
 
+class MissingCompiler:
+
+    def needs_static_linker(self) -> bool:
+        raise DependencyException('no toolchain found')
+
+    def get_optimization_args(self, optimization_level: str) -> T.List[str]:
+        raise DependencyException('no toolchain found')
+
+    def sanity_check(self, work_dir: str, environment: 'Environment') -> None:
+        raise DependencyException('no toolchain found')
+
+    def __getattribute__(self, item):
+        raise DependencyException('no toolchain found')
+
+    def __getattr__(self, item):
+        raise DependencyException('no toolchain found')
+
+    @abc.abstractmethod
+    def get_output_args(self, outputname: str) -> T.List[str]:
+        raise DependencyException('no toolchain found')
+
+    def __eq__(self, other):
+        return other is None
+
+    def __bool__(self):
+        return False
 
 class DependencyMethods(Enum):
     # Auto means to use whatever dependency checking mechanisms in whatever order meson thinks is best.
@@ -572,7 +602,7 @@ def process_method_kw(possible: T.Iterable[DependencyMethods], kwargs: T.Dict[st
     return methods
 
 def detect_compiler(name: str, env: 'Environment', for_machine: MachineChoice,
-                    language: T.Optional[str]) -> T.Optional['Compiler']:
+                    language: T.Optional[str]) -> 'Compiler':
     """Given a language and environment find the compiler used."""
     compilers = env.coredata.compilers[for_machine]
 
@@ -590,7 +620,7 @@ def detect_compiler(name: str, env: 'Environment', for_machine: MachineChoice,
                 return compilers[lang]
             except KeyError:
                 continue
-    return None
+    return MissingCompiler()
 
 
 class SystemDependency(ExternalDependency):
@@ -604,21 +634,6 @@ class SystemDependency(ExternalDependency):
 
     def log_tried(self) -> str:
         return 'system'
-
-
-class SystemLibDependency(SystemDependency):
-
-    """Dependency base for System Library type dependencies."""
-
-    def __init__(self, name: str, env: 'Environment', kwargs: T.Dict[str, T.Any],
-                 language: T.Optional[str] = None) -> None:
-        super().__init__(name, env, kwargs, language=language)
-
-        if not self.clib_compiler:
-            raise DependencyException('no proper toolchain found.')
-
-    def log_tried(self) -> str:
-        return 'systemLib'
 
 
 class BuiltinDependency(ExternalDependency):

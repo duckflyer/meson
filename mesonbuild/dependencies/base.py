@@ -28,7 +28,7 @@ from ..compilers import clib_langs
 from ..mesonlib import LibType, MachineChoice, MesonException, HoldableObject, OptionKey
 from ..mesonlib import version_compare_many
 #from ..interpreterbase import FeatureDeprecated, FeatureNew
-import abc
+
 if T.TYPE_CHECKING:
     import abc
     from .._typing import ImmutableListProtocol
@@ -43,38 +43,28 @@ if T.TYPE_CHECKING:
     from ..mesonlib import FileOrString
 
 
-
-
-
 class DependencyException(MesonException):
     '''Exceptions raised while trying to find dependencies'''
 
+
 class MissingCompiler:
+    """Represent a None Compiler - when no tool chain is found.
+    replacing AttributeError with DependencyException"""
 
-    def needs_static_linker(self) -> bool:
-        raise DependencyException('no toolchain found')
-
-    def get_optimization_args(self, optimization_level: str) -> T.List[str]:
-        raise DependencyException('no toolchain found')
-
-    def sanity_check(self, work_dir: str, environment: 'Environment') -> None:
-        raise DependencyException('no toolchain found')
+    exception_msg = 'no toolchain found'
 
     def __getattribute__(self, item):
-        raise DependencyException('no toolchain found')
+        raise DependencyException(MissingCompiler.exception_msg)
 
     def __getattr__(self, item):
-        raise DependencyException('no toolchain found')
-
-    @abc.abstractmethod
-    def get_output_args(self, outputname: str) -> T.List[str]:
-        raise DependencyException('no toolchain found')
+        raise DependencyException(MissingCompiler.exception_msg)
 
     def __eq__(self, other):
         return other is None
 
     def __bool__(self):
         return False
+
 
 class DependencyMethods(Enum):
     # Auto means to use whatever dependency checking mechanisms in whatever order meson thinks is best.

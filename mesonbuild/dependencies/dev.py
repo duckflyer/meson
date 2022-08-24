@@ -505,7 +505,7 @@ class ZlibSystemDependency(SystemDependency):
             self.link_args = ['-lz']
         else:
             # Without a clib_compiler we can't find zlib, so just give up.
-            if self.clib_compiler is None:
+            if not self.clib_compiler:
                 self.is_found = False
                 return
 

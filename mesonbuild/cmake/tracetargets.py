@@ -24,7 +24,7 @@ def resolve_cmake_trace_targets(target_name: str,
                                 trace: 'CMakeTraceParser',
                                 env: 'Environment',
                                 *,
-                                clib_compiler: T.Optional['Compiler'] = None,
+                                clib_compiler: T.Union['MissongCompiler', 'Compiler'] = None,
                                 not_found_warning: T.Callable[[str], None] = lambda x: None) -> ResolvedTarget:
     res = ResolvedTarget()
     targets = [target_name]

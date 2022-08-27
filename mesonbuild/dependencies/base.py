@@ -30,7 +30,6 @@ from ..mesonlib import version_compare_many
 #from ..interpreterbase import FeatureDeprecated, FeatureNew
 
 if T.TYPE_CHECKING:
-    import abc
     from .._typing import ImmutableListProtocol
     from ..build import StructuredSources
     from ..compilers.compilers import Compiler

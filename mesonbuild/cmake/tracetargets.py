@@ -24,7 +24,7 @@ def resolve_cmake_trace_targets(target_name: str,
                                 trace: 'CMakeTraceParser',
                                 env: 'Environment',
                                 *,
-                                clib_compiler: T.Optional['Compiler'] = None,
+                                clib_compiler: T.Union['MissongCompiler', 'Compiler'] = None,
                                 not_found_warning: T.Callable[[str], None] = lambda x: None) -> ResolvedTarget:
     res = ResolvedTarget()
     targets = [target_name]
@@ -48,7 +48,7 @@ def resolve_cmake_trace_targets(target_name: str,
                 res.libraries += [curr]
             elif Path(curr).is_absolute() and Path(curr).exists():
                 res.libraries += [curr]
-            elif env.machines.build.is_windows() and reg_is_maybe_bare_lib.match(curr) and clib_compiler is not None:
+            elif env.machines.build.is_windows() and reg_is_maybe_bare_lib.match(curr) and clib_compiler:
                 # On Windows, CMake library dependencies can be passed as bare library names,
                 # CMake brute-forces a combination of prefix/suffix combinations to find the
                 # right library. Assume any bare argument passed which is not also a CMake

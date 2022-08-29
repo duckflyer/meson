@@ -2,6 +2,7 @@
 # Copyright 2021 The Meson development team
 
 from .common import cmake_is_debug
+from ..dependencies.base import MissingCompiler
 from .. import mlog
 
 from pathlib import Path
@@ -12,6 +13,7 @@ if T.TYPE_CHECKING:
     from .traceparser import CMakeTraceParser
     from ..environment import Environment
     from ..compilers import Compiler
+
 
 class ResolvedTarget:
     def __init__(self) -> None:
@@ -24,7 +26,7 @@ def resolve_cmake_trace_targets(target_name: str,
                                 trace: 'CMakeTraceParser',
                                 env: 'Environment',
                                 *,
-                                clib_compiler: T.Union['MissongCompiler', 'Compiler'] = None,
+                                clib_compiler: T.Union['MissingCompiler', 'Compiler'] = MissingCompiler(),
                                 not_found_warning: T.Callable[[str], None] = lambda x: None) -> ResolvedTarget:
     res = ResolvedTarget()
     targets = [target_name]

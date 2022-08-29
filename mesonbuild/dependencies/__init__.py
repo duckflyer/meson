@@ -15,7 +15,7 @@
 from .boost import BoostDependency
 from .cuda import CudaDependency
 from .hdf5 import hdf5_factory
-from .base import Dependency, InternalDependency, ExternalDependency, NotFoundDependency
+from .base import Dependency, InternalDependency, ExternalDependency, NotFoundDependency, MissingCompiler
 from .base import (
         ExternalLibrary, DependencyException, DependencyMethods,
         BuiltinDependency, SystemDependency, get_leaf_external_dependencies)
@@ -66,6 +66,8 @@ __all__ = [
     'find_external_dependency',
     'get_dep_identifier',
     'get_leaf_external_dependencies',
+
+    'MissingCompiler',
 ]
 
 """Dependency representations and discovery logic.

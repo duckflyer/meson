@@ -50,16 +50,8 @@ class MissingCompiler:
     """Represent a None Compiler - when no tool chain is found.
     replacing AttributeError with DependencyException"""
 
-    exception_msg = 'no toolchain found'
-
-    def __getattribute__(self, item):
-        raise DependencyException(MissingCompiler.exception_msg)
-
     def __getattr__(self, item):
-        raise DependencyException(MissingCompiler.exception_msg)
-
-    def __eq__(self, other):
-        return other is None
+        raise DependencyException('no toolchain found')
 
     def __bool__(self):
         return False
